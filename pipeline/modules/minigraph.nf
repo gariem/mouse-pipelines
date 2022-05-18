@@ -30,8 +30,8 @@ process bubble_bed {
     publishDir file(params.results + '/support-files/'), mode: "copy"
     
     input:
-        file genome_graph
-        each file chromosomes
+        file chromosomes
+        each genome_graph
     
     output:
         tuple val(strain), file("*.bubbles.bed")
@@ -69,7 +69,7 @@ workflow {
 
     graph = genome_graph(reference, chromosomes_ch.collect())
 
-    bubbles = bubble_bed(graph, chromosomes_ch)
+    bubbles = bubble_bed(chromosomes_ch, graph)
 
     call_indels(bubbles)
 }
