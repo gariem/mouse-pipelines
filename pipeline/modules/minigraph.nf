@@ -31,7 +31,7 @@ process bubble_bed {
     
     input:
         file genome_graph
-        file chromosomes
+        each file chromosomes
     
     output:
         tuple val(strain), file("*.bubbles.bed")
@@ -68,5 +68,8 @@ workflow {
     chromosomes_ch = Channel.fromPath(params.chromosomes)
 
     graph = genome_graph(reference, chromosomes_ch.collect())
-    graph.view()
+
+    bubbles = bubble_bed(graph, chromosomes_ch)
+
+    call_indels(bubbles)
 }
