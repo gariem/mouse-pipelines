@@ -1,0 +1,6 @@
+work
+*.fasta
+*.fa
+*.log.*
+.nextflow.log
+.nextflow/
