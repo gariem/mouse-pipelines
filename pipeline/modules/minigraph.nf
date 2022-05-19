@@ -2,8 +2,8 @@
 
 nextflow.enable.dsl = 2
 
-params.reference = './input/Mus_musculus.GRCm39.dna.toplevel.fa'
-params.chromosomes = './input/chromosomes/*.fasta'
+params.reference = './input/Mus_musculus.GRCm39.dna.toplevel.chr19.fa'
+params.chromosomes = './input/chromosomes/*.chr19.fasta'
 params.results = './results/graph'
 
 process genome_graph {
@@ -38,10 +38,10 @@ process bubble_bed {
 
     script:
 
-    strain_name = chromosomes.name.tokenize('.').get(0)
+    strain = chromosomes.name.tokenize('.').get(0)
 
     """
-    minigraph -xasm -t${task.cpus} --call ${genome_graph} ${chromosomes} > ${strain_name}.bubbles.bed
+    minigraph -xasm -t${task.cpus} --call ${genome_graph} ${chromosomes} > ${strain}.bubbles.bed
     """
 }
 
@@ -56,8 +56,8 @@ process call_indels {
         tuple val(strain), file("*.bed")
     
     """
-    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$6!="."&&(\$3-\$2)<\$7)print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph__INS.bed"
-    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$6!="."&&(\$3-\$2)>\$7)print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph__DEL.bed"
+    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$6!="."&&(\$3-\$2)<\$7)print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph.INS.bed"
+    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$6!="."&&(\$3-\$2)>\$7)print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph.DEL.bed"
     """    
 }
 

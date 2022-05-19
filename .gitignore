@@ -4,3 +4,4 @@ work
 *.log.*
 .nextflow.log
 .nextflow/
+results/
