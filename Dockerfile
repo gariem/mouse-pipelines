@@ -12,7 +12,7 @@ ENV DISPLAY_CONFIGURATION=1024x768x24
 RUN apt-get update && apt-get install -y build-essential git zlib1g-dev wget \ 
     libbz2-dev liblzma-dev libcurl4-gnutls-dev autoconf libncurses5-dev \
     libncursesw5-dev libssl-dev libxml-xpath-perl libjson-perl bedtools \
-    xvfb xorg x11-utils bc
+    xvfb xorg x11-utils bc curl
 
 # htslib, bcftools, and samtools
 RUN git clone -b 1.13 https://github.com/samtools/htslib.git && \
@@ -47,5 +47,9 @@ RUN yes | bash ~/miniconda.sh -b -p ~/miniconda
 ENV PATH="/root/miniconda/condabin:/root/miniconda/bin:$PATH"
 
 RUN conda install -y -c bioconda scipy matplotlib pandas numpy pbsv
+
+# Minimap2
+RUN curl -L https://github.com/lh3/minimap2/releases/download/v2.24/minimap2-2.24_x64-linux.tar.bz2 | tar -jxvf - && \
+    ln ./minimap2-2.24_x64-linux/minimap2 /sbin/minimap2
 
 CMD ["bash"]

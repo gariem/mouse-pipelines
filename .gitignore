@@ -5,3 +5,5 @@ work
 .nextflow.log
 .nextflow/
 results/
+*.gz
+*.fai
