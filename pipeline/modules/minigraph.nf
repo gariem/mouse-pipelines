@@ -6,12 +6,13 @@ params.reference = './input/Mus_musculus.GRCm39.dna.toplevel.chr19.fa'
 params.chromosomes = './input/chromosomes/*.chr19.fasta'
 params.results = './results/graph'
 
+maxcpus = Runtime.runtime.availableProcessors()
+
 process genome_graph {
 
+    cpus maxcpus
     publishDir file(params.results + '/support-files/'), mode: "copy"
-
-    cpus 8
-
+    
     input:
         file reference
         file all_chromosomes
@@ -20,6 +21,7 @@ process genome_graph {
         file "*.gfa"
 
     """
+    echo "Using ${task.cpus} CPUs"
     minigraph -xggs -t${task.cpus} ${reference} ${all_chromosomes} > mouse_genomes_graph.gfa
     """
 
@@ -27,6 +29,7 @@ process genome_graph {
 
 process bubble_bed { 
 
+    cpus 4
     publishDir file(params.results + '/support-files/'), mode: "copy"
     
     input:
