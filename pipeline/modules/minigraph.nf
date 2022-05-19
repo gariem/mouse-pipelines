@@ -2,9 +2,9 @@
 
 nextflow.enable.dsl = 2
 
-params.reference = './input/Mus_musculus.GRCm39.dna.toplevel.chr19.fa'
-params.chromosomes = './input/chromosomes/*.chr19.fasta'
-params.results = './results/graph'
+params.reference = "./input/Mus_musculus.GRCm39.dna.toplevel.chr19.fa"
+params.chromosomes = "./input/chromosomes/*.chr19.fasta"
+params.results = "./results/graph"
 
 maxcpus = Runtime.runtime.availableProcessors()
 
@@ -68,11 +68,18 @@ process call_indels {
 workflow {
 
     reference = file(params.reference)
-    chromosomes_ch = Channel.fromPath(params.chromosomes)
+    Channel.fromPath(params.chromosomes).multiMap{ file ->
+        graph: file
+        bubbles: file
+    }.set{chromosomes}
 
-    graph = genome_graph(reference, chromosomes_ch.collect())
+    all_chromosomes = chromosomes.graph.collect()
 
-    bubbles = bubble_bed(chromosomes_ch, graph)
+    all_chromosomes.view()
 
-    call_indels(bubbles)
+    // graph = genome_graph(reference, all_chromosomes)
+
+    // bubbles = bubble_bed(graph, chromosomes.bubbles)
+
+    // call_indels(bubbles)
 }
