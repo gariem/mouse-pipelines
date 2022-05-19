@@ -68,18 +68,11 @@ process call_indels {
 workflow {
 
     reference = file(params.reference)
-    Channel.fromPath(params.chromosomes).multiMap{ file ->
-        graph: file
-        bubbles: file
-    }.set{chromosomes}
+    chromosomes_ch = Channel.fromPath(params.chromosomes)
 
-    all_chromosomes = chromosomes.graph.collect()
+    graph = genome_graph(reference, chromosomes_ch.collect())
 
-    all_chromosomes.view()
+    bubbles = bubble_bed(chromosomes_ch, graph)
 
-    // graph = genome_graph(reference, all_chromosomes)
-
-    // bubbles = bubble_bed(graph, chromosomes.bubbles)
-
-    // call_indels(bubbles)
+    call_indels(bubbles)
 }
