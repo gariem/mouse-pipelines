@@ -30,6 +30,7 @@ process genome_graph {
 process bubble_bed { 
 
     cpus 4
+    maxForks 3
     publishDir file(params.results + '/support-files/'), mode: "copy"
     
     input:
