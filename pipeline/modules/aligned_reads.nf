@@ -37,6 +37,38 @@ process align_reads {
 
 }
 
+process discover_pbsv {
+
+    input:
+        tuple val(strain), file(aligned_reads)
+
+    output:
+        tuple val(strain), file("*.svsig.gz")
+
+    """
+    pbsv discover ${aligned_reads} "${strain}.svsig.gz"
+    """
+}
+
+process call_pbsv {
+
+    cpus taskCpus
+    maxForks usedForks
+
+    publishDir file(params.results + '/support-files/'), mode: "copy"
+
+    input:
+        file reference
+        tuple val(strain), file(sv_signature)
+
+    output:
+        tuple val(strain), file("*.vcf")
+
+    """
+    pbsv call -j ${taskCpus} ${reference} ${sv_signature} "${strain}-pbsv.vcf"
+    """
+}
+
 workflow {
 
     reference = file(params.reference)
@@ -47,5 +79,8 @@ workflow {
     }.groupTuple(by: 0)
     .set{reads}
 
-    align_reads(reference, reads)
+    aligned_reads = align_reads(reference, reads)
+    sv_signatures = discover_pbsv(aligned_reads)
+    vcf = call_pbsv(reference, sv_signatures)
+
 }
