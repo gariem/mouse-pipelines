@@ -4,7 +4,7 @@ nextflow.enable.dsl = 2
 
 params.reference = "./input/Mus_musculus.GRCm39.dna.toplevel.fa"
 params.reads = "./input/reads/long/*/*.gz"
-params.results = "./results/graph"
+params.results = "./results/lreads"
 
 maxcpus = Runtime.runtime.availableProcessors()
 usedForks = 2
