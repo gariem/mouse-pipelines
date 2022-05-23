@@ -47,6 +47,7 @@ RUN yes | bash ~/miniconda.sh -b -p ~/miniconda
 ENV PATH="/root/miniconda/condabin:/root/miniconda/bin:$PATH"
 
 RUN conda install -y -c bioconda scipy matplotlib pandas numpy pbsv
+RUN conda install -y -c hcc smrtlink-tools
 
 # Minimap2
 RUN curl -L https://github.com/lh3/minimap2/releases/download/v2.24/minimap2-2.24_x64-linux.tar.bz2 | tar -jxvf - && \

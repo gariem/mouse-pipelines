@@ -4,7 +4,7 @@ nextflow.enable.dsl = 2
 
 params.reference = "./input/Mus_musculus.GRCm39.dna.toplevel.chr19.fa"
 params.chromosomes = "./input/chromosomes/*.chr19.fasta"
-params.results = "./results/graph"
+params.results = "./results"
 
 maxcpus = Runtime.runtime.availableProcessors()
 
