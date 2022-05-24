@@ -91,7 +91,7 @@ process bed_files {
     publishDir file(params.results + '/calls/'), mode: "copy"
 
     input: 
-        file vcf_file
+        tuple val(strain), file(vcf_file)
         each type
     
     output:
