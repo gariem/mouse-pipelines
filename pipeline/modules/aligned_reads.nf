@@ -13,6 +13,7 @@ taskCpus = Math.round(maxcpus / usedForks)
 
 process tandem_repeats { 
 
+    cpus 8
     publishDir file(params.results + '/support-files/'), mode: "copy"
 
     input: 
@@ -23,7 +24,7 @@ process tandem_repeats {
 
     """
     python -m pbsvtools.tasks.split_ref_to_chrs ${reference} GRCm39.chr_size.csv
-    python -m pbsvtools.tasks.tandem_repeat_finder ${reference} GRCm39.chr_size.csv Mus_musculus.GRCm39.tandemrepeats.bed
+    python -m pbsvtools.tasks.tandem_repeat_finder --nproc 8 ${reference} GRCm39.chr_size.csv Mus_musculus.GRCm39.tandemrepeats.bed
     """
 }
 
@@ -41,9 +42,9 @@ process align_reads {
 
     """
     if zcat ${reads} | head -n 12 | grep -q ccs; then
-        PRESET=map-hifi
+        PRESET="map-hifi"
     else
-        PRESET=map-pb
+        PRESET="map-pb"
     fi
 
     minimap2 -R '@RG\tID:${strain}\tSM:${strain}' --MD -Y -t ${taskCpus} -ax \${PRESET} ${reference} ${reads} | samtools view -bS - | samtools sort -T ./tmp -o ${strain}.sorted.bam - 

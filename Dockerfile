@@ -44,7 +44,7 @@ RUN git clone https://github.com/lh3/minigraph.git && cd minigraph && make -j `n
 # Miniconda
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.11.0-Linux-x86_64.sh -O ~/miniconda.sh
 RUN yes | bash ~/miniconda.sh -b -p ~/miniconda
-ENV PATH="/root/miniconda/condabin:/root/miniconda/bin:$PATH"
+ENV PATH="$PATH:/root/miniconda/condabin:/root/miniconda/bin"
 
 RUN conda install -y -c bioconda scipy matplotlib pandas numpy pbsv
 RUN conda install -y -c hcc smrtlink-tools
