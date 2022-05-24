@@ -11,7 +11,7 @@ maxcpus = Runtime.runtime.availableProcessors()
 process genome_graph {
 
     cpus maxcpus
-    publishDir file(params.results + '/support-files/'), mode: "copy"
+    publishDir file(params.results + '/support-files/minigraph'), mode: "copy"
     
     input:
         file reference
@@ -31,7 +31,7 @@ process bubble_bed {
 
     cpus 4
     maxForks 3
-    publishDir file(params.results + '/support-files/'), mode: "copy"
+    publishDir file(params.results + '/support-files/minigraph'), mode: "copy"
     
     input:
         file chromosomes

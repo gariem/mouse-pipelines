@@ -33,6 +33,8 @@ process align_reads {
     cpus taskCpus
     maxForks usedForks
 
+    publishDir file(params.results + '/support-files/alignments'), mode: "copy"
+
     input:
         file reference
         tuple val(strain), file(reads)
@@ -42,9 +44,9 @@ process align_reads {
 
     """
     if zcat ${reads} | head -n 12 | grep -q ccs; then
-        PRESET="map-hifi"
+        PRESET=map-hifi
     else
-        PRESET="map-pb"
+        PRESET=map-pb
     fi
 
     minimap2 -R '@RG\tID:${strain}\tSM:${strain}' --MD -Y -t ${taskCpus} -ax \${PRESET} ${reference} ${reads} | samtools view -bS - | samtools sort -T ./tmp -o ${strain}.sorted.bam - 
@@ -54,6 +56,8 @@ process align_reads {
 }
 
 process discover_pbsv {
+
+    publishDir file(params.results + '/support-files/pbsv'), mode: "copy"
 
     input:
         tuple val(strain), file(aligned_reads)
@@ -72,7 +76,7 @@ process call_pbsv {
     cpus taskCpus
     maxForks usedForks
 
-    publishDir file(params.results + '/support-files/'), mode: "copy"
+    publishDir file(params.results + '/support-files/pbsv'), mode: "copy"
 
     input:
         file reference
