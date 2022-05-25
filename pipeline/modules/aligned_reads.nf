@@ -32,7 +32,6 @@ process align_reads {
     
     cpus taskCpus
     maxForks usedForks
-    stageInMode "link"
 
     publishDir file(params.results + '/support-files/alignments'), mode: "copy"
 
@@ -51,7 +50,7 @@ process align_reads {
     fi
 
     mkdir tmp
-    minimap2 -R '@RG\tID:${strain}\tSM:${strain}' --MD -Y -t ${taskCpus} -ax \${PRESET} ${reference} ${reads} | samtools view -bS - | samtools sort -T ./tmp -o ${strain}.sorted.bam - 
+    minimap2 -R '@RG\\tID:${strain}\\tSM:${strain}' --MD -Y -t ${taskCpus} -ax \$PRESET ${reference} ${reads} | samtools view -bS - | samtools sort -T ./tmp -o ${strain}.sorted.bam - 
     """
 
 }
