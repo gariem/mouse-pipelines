@@ -32,6 +32,7 @@ process align_reads {
     
     cpus taskCpus
     maxForks usedForks
+    stageInMode "link"
 
     publishDir file(params.results + '/support-files/alignments'), mode: "copy"
 
@@ -51,7 +52,6 @@ process align_reads {
 
     mkdir tmp
     minimap2 -R '@RG\tID:${strain}\tSM:${strain}' --MD -Y -t ${taskCpus} -ax \${PRESET} ${reference} ${reads} | samtools view -bS - | samtools sort -T ./tmp -o ${strain}.sorted.bam - 
-
     """
 
 }
@@ -117,7 +117,7 @@ workflow {
 
     reference = file(params.reference)
 
-    repeats = tandem_repeats(reference)
+    // repeats = tandem_repeats(reference)
 
     Channel.fromPath(params.reads).map{file ->
         def parent = file.parent.name
@@ -126,10 +126,10 @@ workflow {
     .set{reads}
 
     aligned_reads = align_reads(reads, reference)
-    sv_signatures = discover_pbsv(aligned_reads, repeats)
-    vcf = call_pbsv(sv_signatures, reference)
+    // sv_signatures = discover_pbsv(aligned_reads, repeats)
+    // vcf = call_pbsv(sv_signatures, reference)
 
-    sv_types = Channel.from(['INS', 'DEL', 'INV', 'DUP'])
-    bed_files(vcf, sv_types)
+    // sv_types = Channel.from(['INS', 'DEL', 'INV', 'DUP'])
+    // bed_files(vcf, sv_types)
 
 }
