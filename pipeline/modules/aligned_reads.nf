@@ -36,8 +36,8 @@ process align_reads {
     publishDir file(params.results + '/support-files/alignments'), mode: "copy"
 
     input:
-        file reference
         tuple val(strain), file(reads)
+        file reference
 
     output:
         tuple val(strain), file("*.sorted.bam")
@@ -49,6 +49,7 @@ process align_reads {
         PRESET=map-pb
     fi
 
+    mkdir tmp
     minimap2 -R '@RG\tID:${strain}\tSM:${strain}' --MD -Y -t ${taskCpus} -ax \${PRESET} ${reference} ${reads} | samtools view -bS - | samtools sort -T ./tmp -o ${strain}.sorted.bam - 
 
     """
@@ -79,8 +80,8 @@ process call_pbsv {
     publishDir file(params.results + '/support-files/pbsv'), mode: "copy"
 
     input:
-        file reference
         tuple val(strain), file(sv_signature)
+        file reference
 
     output:
         tuple val(strain), file("*.vcf")
@@ -124,9 +125,9 @@ workflow {
     }.groupTuple(by: 0)
     .set{reads}
 
-    aligned_reads = align_reads(reference, reads)
+    aligned_reads = align_reads(reads, reference)
     sv_signatures = discover_pbsv(aligned_reads, repeats)
-    vcf = call_pbsv(reference, sv_signatures)
+    vcf = call_pbsv(sv_signatures, reference)
 
     sv_types = Channel.from(['INS', 'DEL', 'INV', 'DUP'])
     bed_files(vcf, sv_types)
