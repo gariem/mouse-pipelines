@@ -7,3 +7,4 @@ work
 results/
 *.gz
 *.fai
+input/validation
