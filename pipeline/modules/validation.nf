@@ -78,9 +78,9 @@ process split_ranges {
     end = rangeParts.get(1)
 
     """
-    cat ${lab_data} | awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2,\$3,\$4<0?\$4*-1:\$4}' | awk '\$4 >= ${start} && \$4 <= ${end}' > "segment.lab.bed"
-    cat ${new_data} | awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2,\$3,\$4<0?\$4*-1:\$4}' | awk '\$4 >= ${start} && \$4 <= ${end}' > "segment.new.bed"
-    cat ${prev_data} | awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2,\$3,\$4<0?\$4*-1:\$4}' | awk '\$4 >= ${start} && \$4 <= ${end}' > "segment.prev.bed"
+    cat ${lab_data} | awk -F"[\\t/]" 'BEGIN {OFS = "\\t"} {print \$1,\$2,\$3,\$4<0?\$4*-1:\$4}' | awk '\$4 >= ${start} && \$4 <= ${end}' > "segment.lab.bed"
+    cat ${new_data} | awk -F"[\\t/]" 'BEGIN {OFS = "\\t"} {print \$1,\$2,\$3,\$4<0?\$4*-1:\$4}' | awk '\$4 >= ${start} && \$4 <= ${end}' > "segment.new.bed"
+    cat ${prev_data} | awk -F"[\\t/]" 'BEGIN {OFS = "\\t"} {print \$1,\$2,\$3,\$4<0?\$4*-1:\$4}' | awk '\$4 >= ${start} && \$4 <= ${end}' > "segment.prev.bed"
 
     """
 }

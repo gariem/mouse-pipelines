@@ -90,6 +90,24 @@ process call_pbsv {
     """
 }
 
+process filter_pbsv {
+
+     input: 
+        tuple val(strain), file(vcf_file)
+        val ad_limits
+    
+    output:
+        tuple val(strain), file("*.vcf")
+
+    script:
+
+    outname = vcf_file.name.replace(".vcf", ".filtered.vcf") + 
+    """
+    bcftools view -i'(AD[0:1] - AD[0:0])>=${ad_limits[0]} && (AD[0:1] - AD[0:0])<=${ad_limits[1]}' ${vcf_file} > "${outname}"
+    """
+}
+
+
 process bed_files {
 
     publishDir file(params.results + '/calls/'), mode: "copy"
@@ -128,6 +146,7 @@ workflow {
     sv_signatures = discover_pbsv(aligned_reads, repeats)
     vcf = call_pbsv(sv_signatures, reference)
 
+    filter_pbsv(vcf, [])
     sv_types = Channel.from(['INS', 'DEL', 'INV', 'DUP'])
     bed_files(vcf, sv_types)
 
