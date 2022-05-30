@@ -66,7 +66,7 @@ process prepare_screnshot_data {
 process take_screenshots {
 
     publishDir file(params.results + '/support-files/captures/'), mode: "copy", saveAs: {
-                    filename -> filename.split('\\.')[0] + '/' + filename
+                    filename -> filename.split('\\.')[0] + '/' + filename.replace(filename.split('\\.')[0] + ".","")
                 }    
 
     input:
@@ -74,7 +74,7 @@ process take_screenshots {
         file igv_workdir
 
     output:
-        file "*.txt"
+        file "*.png"
 
     script:
 
@@ -82,7 +82,7 @@ process take_screenshots {
     bedToIgv -slop 50 -i ${bed_file} | grep -v snapshotDirectory >> snapshots.tmp
     bedToIgv -slop 500 -i ${bed_file} | grep -v snapshotDirectory >> snapshots.tmp
 
-    echo "snapshotDirectory ./captures" >> snapshots.txt
+    echo "snapshotDirectory ." >> snapshots.txt
 
     cat snapshots.tmp | awk '/^goto/ {s=\$0} /^snapshot/ {print s "\\t" \$0}' | sort -t \$'\\t' -k 1,2 | sed 's/\\t/\\n/' | awk  -F"[ :_]" 'BEGIN {prev=\$2; init=0} {if (init=0 || prev != \$2) print "load ${igv_workdir}/${strain}/${strain}."\$2".session.xml \\nload ${bed_file}"; print; prev = \$2; init=1}' >> snapshots.txt
     
