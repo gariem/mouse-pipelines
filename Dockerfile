@@ -49,7 +49,7 @@ WORKDIR /home/mouse
 RUN wget https://data.broadinstitute.org/igv/projects/downloads/2.12/IGV_Linux_2.12.2_WithJava.zip -O IGV_Linux_2.12.2_WithJava.zip && \
     unzip IGV_Linux_2.12.2_WithJava.zip
 
-ENV PATH="/IGV_Linux_2.12.2/jdk-11/bin:${PATH}"
+ENV PATH="IGV_Linux_2.12.2/jdk-11/bin:${PATH}"
 
 # Miniconda
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.11.0-Linux-x86_64.sh -O /home/mouse/miniconda.sh
@@ -58,5 +58,7 @@ ENV PATH="$PATH:/home/mouse/miniconda/condabin:/home/mouse/miniconda/bin"
 
 RUN conda install -y -c bioconda scipy matplotlib pandas numpy pbsv
 RUN conda install -y -c hcc smrtlink-tools
+
+ENV PATH="$PATH:/home/mouse/miniconda/condabin:/home/mouse/miniconda/bin:/home/mouse/IGV_Linux_2.12.2/jdk-11/bin"
 
 CMD ["bash"]

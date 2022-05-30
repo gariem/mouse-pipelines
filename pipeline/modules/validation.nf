@@ -3,9 +3,9 @@
 nextflow.enable.dsl = 2
 
 params.tag = "minigraph"
-params.lab_data = "./input/validation/lab/*.bed"
-params.prev_data = "./input/validation/previous/*.bed"
-params.calls = "./results/calls/*-${params.tag}.*.bed"
+params.lab_data = "./results/mm10/lab/*.bed"
+params.prev_data = "./results/mm10/previous/*.bed"
+params.calls = "./results/calls38/*-${params.tag}.*.bed"
 params.results = "./results"
 
 params.window_lab = 30
@@ -87,7 +87,7 @@ process split_ranges {
 
 process collect_stats {
 
-    publishDir file(params.results + '/support-files'), mode: "copy"
+    publishDir file(params.results + '/support-files/validation/' + params.tag), mode: "copy"
 
     input:
         file stats
@@ -101,6 +101,23 @@ process collect_stats {
     """
 
 }
+
+process save_missed {
+
+    publishDir file(params.results + '/support-files/validation/' + params.tag), mode: "copy"
+
+    input:
+        tuple val(strain), val(type), file(missed_bed)
+    
+    output:
+        tuple val(strain), val(type), file("*.missed.bed")
+
+    """
+    cp ${missed_bed} "${strain}.${type}.missed.bed"
+    """
+
+}
+
 
 def inputTuples(file) { 
     def strain = file.name.tokenize(".").get(0).tokenize("-").get(0)
@@ -121,9 +138,12 @@ workflow {
     ranged_lab_new_prev = split_ranges(ranges, lab_new_prev)
 
     all_results = new_lab_prev_stats(all_lab_new_prev.concat(ranged_lab_new_prev))
-    all_stats = all_results.map{t -> return t[4]}.collect()
     
+    all_stats = all_results.map{t -> return t[4]}.collect()    
     collect_stats(all_stats)
+
+    missed = all_results.filter{it[2] == "ALL"}.map{t -> return tuple(t[0],t[1],t[3])}
+    save_missed(missed)
 
 }
 

@@ -7,8 +7,7 @@ params.reads = "./input/reads/long/*/*.gz"
 params.results = "./results"
 
 maxcpus = Runtime.runtime.availableProcessors()
-usedForks = 2
-
+usedForks = 4
 taskCpus = Math.round(maxcpus / usedForks)
 
 process tandem_repeats { 
