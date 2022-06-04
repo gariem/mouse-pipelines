@@ -5,7 +5,7 @@ nextflow.enable.dsl = 2
 params.tag = "minigraph"
 params.lab_data = "./results/mm10/lab/*.bed"
 params.prev_data = "./results/mm10/previous/*.bed"
-params.calls = "./results/calls38/*-${params.tag}.*.bed"
+params.calls = "./results/calls/*-${params.tag}.*.bed"
 params.results = "./results"
 
 params.window_lab = 30
