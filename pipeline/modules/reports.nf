@@ -61,17 +61,20 @@ process intersect_prev_genes{
     awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$4}' ${new_data} > new_data
     awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$4}' ${prev_data} > prev_data
 
-    bedtools intersect -a new_data -b prev_data -v > new_elements
+    bedtools intersect -a new_data -b prev_data -v > novel_elements
     bedtools intersect -a new_data -b ${gene_data} -wa > gene_new
     bedtools intersect -a prev_data -b ${gene_data} -wa > gene_prev
+
+    bedtools intersect -a novel_elements -b ${gene_data} -wa > gene_novel
     
     NEW_COUNT="\$(cat new_data | awk '!x[\$0]++' | wc -l)"
     PREV_COUNT="\$(cat prev_data | awk '!x[\$0]++' | wc -l)"
     GENE_COUNT="\$(cat ${gene_data} | awk '!x[\$0]++' | wc -l)"
 
-    NOVO_COUNT="\$(cat new_elements | awk '!x[\$0]++' | wc -l)"
+    NOVEL_COUNT="\$(cat novel_elements | awk '!x[\$0]++' | wc -l)"
     GENES_INTERSECTED_NEW="\$(cat gene_new | awk '!x[\$0]++' | wc -l)"
     GENES_INTERSECTED_PREV="\$(cat gene_prev | awk '!x[\$0]++' | wc -l)"
+    GENES_INTERSECTED_NOVEL="\$(cat gene_novel | awk '!x[\$0]++' | wc -l)"
 
     echo "STRAIN=${strain}" > gene_stats.data
     echo "TYPE=${type}" >> gene_stats.data
@@ -81,9 +84,10 @@ process intersect_prev_genes{
     echo "PREV_COUNT=\${PREV_COUNT}" >> gene_stats.data
     echo "GENE_COUNT=\${GENE_COUNT}" >> gene_stats.data
 
-    echo "NOVO_COUNT=\${NOVO_COUNT}" >> gene_stats.data
+    echo "NOVEL_COUNT=\${NOVEL_COUNT}" >> gene_stats.data
     echo "GENES_INTERSECTED_PREV=\${GENES_INTERSECTED_PREV}" >> gene_stats.data
     echo "GENES_INTERSECTED_NEW=\${GENES_INTERSECTED_NEW}" >> gene_stats.data
+    echo "GENES_INTERSECTED_NOVEL=\${GENES_INTERSECTED_NOVEL}" >> gene_stats.data
 
     RND="\$(hexdump -n 16 -v -e '/1 "%02X"' -e '/16 "\\n"' /dev/urandom)"
     # cat gene_stats.data | cut -d'=' -f1 | paste -sd "," > stats_\${RND}.csv
@@ -103,9 +107,9 @@ process collect_stats {
         file "*.csv"
     
     """
-    echo "STRAIN,TYPE,RANGE,NEW_COUNT,PREV_COUNT,GENE_COUNT,NOVO_COUNT,GENES_INTERSECTED_PREV,GENES_INTERSECTED_NEW" > gene_analysis.csv
+    echo "STRAIN,TYPE,RANGE,NEW_COUNT,PREV_COUNT,GENE_COUNT,NOVEL_COUNT,GENES_INTERSECTED_PREV,GENES_INTERSECTED_NEW,GENES_INTERSECTED_NOVEL" > gene_analysis.csv
     cat ${stats} >> gene_analysis.csv
-    
+
     """
 
 }
