@@ -55,6 +55,7 @@ RUN yes | bash /home/mouse/miniconda.sh -b -p /home/mouse/miniconda
 ENV PATH="$PATH:/home/mouse/miniconda/condabin:/home/mouse/miniconda/bin"
 
 RUN conda install -y -c bioconda scipy matplotlib pandas numpy pbsv
+RUN conda install -y -c bioconda bedops
 RUN conda install -y -c hcc smrtlink-tools
 
 # PATH
