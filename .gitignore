@@ -9,3 +9,4 @@ results/
 *.fai
 input/validation
 *.gff3
+*.out

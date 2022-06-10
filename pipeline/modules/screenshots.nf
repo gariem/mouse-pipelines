@@ -2,7 +2,7 @@
 
 nextflow.enable.dsl = 2
 
-params.input_files = './results/support-files/validation/minigraph/C57*.INS.*.bed'
+params.input_files = './results/support-files/validation/minigraph/DBA_2J*.INS.*.10.bed'
 params.igv_workdir = '/media/egarcia/DataBank/mouse/igv_workfiles'
 params.results = "./results"
 
