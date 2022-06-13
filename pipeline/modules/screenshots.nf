@@ -40,7 +40,7 @@ process prepare_screnshot_data {
 
         if [ ! -f ${igv_workdir}/${strain}/${strain}.\$chr.h1.contigs.bam ]
         then
-            MAX_POINT="\$(samtools view -H ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam | awk '{if(\$1~/@SQ/){print \$2"\\t1\\t"\$3}}' | sed 's/[SL]N://g' | grep -P "\$chr\\t" | awk '{print \$3}')"
+            MAX_POINT="\$(samtools view -H ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam | awk '{if(\$1~/@SQ/){print \$2"\\t1\\t"\$3}}' | sed 's/[SL]N://g' | grep -P "^\$chr\\t" | awk '{print \$3}')"
             MID_POINT=\$((\${MAX_POINT}/2))
 
             samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:1-\$MID_POINT -b > ${strain}.h1.\$chr.contigs.bam
