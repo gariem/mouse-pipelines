@@ -41,13 +41,16 @@ process prepare_screnshot_data {
         if [ ! -f ${igv_workdir}/${strain}/${strain}.\$chr.h1.contigs.bam ]
         then
             MAX_POINT="\$(samtools view -H ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam | awk '{if(\$1~/@SQ/){print \$2"\\t1\\t"\$3}}' | sed 's/[SL]N://g' | grep -P "^\$chr\\t" | awk '{print \$3}')"
-            MID_POINT=\$((\${MAX_POINT}/2))
+            POINT3=\$((\${MAX_POINT}/3))
+            POINT6=\$((\${POINT3}*2))
 
-            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:1-\$MID_POINT -b > ${strain}.h1.\$chr.contigs.bam
-            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:\$MID_POINT-\$MAX_POINT -b > ${strain}.h2.\$chr.contigs.bam
+            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:1-\$POINT3 -b > ${strain}.h1.\$chr.contigs.bam
+            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:\$POINT3-\$POINT6 -b > ${strain}.h2.\$chr.contigs.bam
+            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:\$POINT6-\$MAX_POINT -b > ${strain}.h3.\$chr.contigs.bam
 
             samtools index -@ ${taskCpus} ${strain}.h1.\$chr.contigs.bam
             samtools index -@ ${taskCpus} ${strain}.h2.\$chr.contigs.bam
+            samtools index -@ ${taskCpus} ${strain}.h3.\$chr.contigs.bam
         fi
 
         if [ ! -f ${igv_workdir}/${strain}/${strain}.\$chr.ilumina.bam ]
@@ -114,7 +117,7 @@ process take_screenshots {
     echo "IGV.Bounds=0,0,1920,1080" > prefs.properties
     echo "DETAILS_BEHAVIOR=CLICK" >> prefs.properties
 
-    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx20000m --module-path=/home/mouse/IGV_Linux_2.12.2/lib --module=org.igv/org.broad.igv.ui.Main -b snapshots.txt -o prefs.properties
+    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx16000m --module-path=/home/mouse/IGV_Linux_2.12.2/lib --module=org.igv/org.broad.igv.ui.Main -b snapshots.txt -o prefs.properties
 
     """
 }
