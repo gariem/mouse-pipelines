@@ -78,6 +78,7 @@ process prepare_screnshot_data {
 
 process take_screenshots {
 
+    time = '1800s'
     publishDir file(params.results + '/support-files/captures/'), mode: "copy", saveAs: {
                     filename -> filename.split('\\.')[0] + '/' + filename.replace(filename.split('\\.')[0] + ".","")
                 }    
@@ -96,6 +97,7 @@ process take_screenshots {
     bedToIgv -slop 50 -i ${bed_file} | grep -v snapshotDirectory >> snapshots.tmp
     bedToIgv -slop 500 -i ${bed_file} | grep -v snapshotDirectory >> snapshots.tmp
     bedToIgv -slop 5000 -i ${bed_file} | grep -v snapshotDirectory >> snapshots.tmp
+    bedToIgv -slop 10000 -i ${bed_file} | grep -v snapshotDirectory >> snapshots.tmp
 
     echo "snapshotDirectory ." >> snapshots.txt
 
@@ -112,7 +114,7 @@ process take_screenshots {
     echo "IGV.Bounds=0,0,1920,1080" > prefs.properties
     echo "DETAILS_BEHAVIOR=CLICK" >> prefs.properties
 
-    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx12000m --module-path=/home/mouse/IGV_Linux_2.12.2/lib --module=org.igv/org.broad.igv.ui.Main -b snapshots.txt -o prefs.properties
+    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx20000m --module-path=/home/mouse/IGV_Linux_2.12.2/lib --module=org.igv/org.broad.igv.ui.Main -b snapshots.txt -o prefs.properties
 
     """
 }
