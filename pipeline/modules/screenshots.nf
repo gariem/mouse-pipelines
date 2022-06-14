@@ -117,7 +117,7 @@ process take_screenshots {
     echo "IGV.Bounds=0,0,1920,1080" > prefs.properties
     echo "DETAILS_BEHAVIOR=CLICK" >> prefs.properties
 
-    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx16000m --module-path=/home/mouse/IGV_Linux_2.12.2/lib --module=org.igv/org.broad.igv.ui.Main -b snapshots.txt -o prefs.properties
+    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx32000m --module-path=/home/mouse/IGV_Linux_2.12.2/lib --module=org.igv/org.broad.igv.ui.Main -b snapshots.txt -o prefs.properties
 
     """
 }
