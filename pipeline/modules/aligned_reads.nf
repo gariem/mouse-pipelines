@@ -4,6 +4,7 @@ nextflow.enable.dsl = 2
 
 params.reference = "./input/Mus_musculus.GRCm39.dna.toplevel.chr1.fa"
 params.reads = "./input/reads/long/*/*.gz"
+params.aligned_reads = "./results/support-files/alignments/*.bam"
 params.results = "./results"
 
 maxcpus = Runtime.runtime.availableProcessors()
@@ -141,7 +142,9 @@ workflow {
     }.groupTuple(by: 0)
     .set{reads}
 
-    aligned_reads = align_reads(reads, reference)
+    // aligned_reads = align_reads(reads, reference)
+    aligned_reads = Channel.fromPath(params.aligned_reads).map {it -> return tuple(it.name.tokenize('.').get(0), it)}
+
     sv_signatures = discover_pbsv(aligned_reads, repeats)
     vcf = call_pbsv(sv_signatures, reference)
 
@@ -150,3 +153,5 @@ workflow {
     bed_files(vcf, sv_types)
 
 }
+
+workflow
