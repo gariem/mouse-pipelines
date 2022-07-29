@@ -2,8 +2,10 @@
 
 nextflow.enable.dsl = 2
 
-params.reference = "./input/Mus_musculus.GRCm39.dna.toplevel.chr1.fa"
+// params.reference = "./input/Mus_musculus.GRCm39.dna.toplevel.chr1.fa"
+params.reference = "/media/egarcia/DataBank/mouse/igv_workfiles/Mus_musculus.GRCm39.dna.toplevel.fa"
 params.reads = "./input/reads/long/*/*.gz"
+params.repeats = "./results/support-files/Mus_musculus.GRCm39.tandemrepeats.bed"
 params.aligned_reads = "./results/support-files/alignments/*.bam"
 params.results = "./results"
 
@@ -134,7 +136,8 @@ workflow {
 
     reference = file(params.reference)
 
-    repeats = tandem_repeats(reference)
+    // repeats = tandem_repeats(reference)
+    repeats = file(params.repeats)
 
     Channel.fromPath(params.reads).map{file ->
         def parent = file.parent.name
@@ -142,7 +145,7 @@ workflow {
     }.groupTuple(by: 0)
     .set{reads}
 
-    // aligned_reads = align_reads(reads, reference)
+    //aligned_reads = align_reads(reads, reference)
     aligned_reads = Channel.fromPath(params.aligned_reads).map {it -> return tuple(it.name.tokenize('.').get(0), it)}
 
     sv_signatures = discover_pbsv(aligned_reads, repeats)
@@ -153,5 +156,3 @@ workflow {
     bed_files(vcf, sv_types)
 
 }
-
-workflow
