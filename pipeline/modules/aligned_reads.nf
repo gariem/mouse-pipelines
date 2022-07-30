@@ -59,6 +59,9 @@ process align_reads {
 
 process discover_pbsv {
 
+    cpus taskCpus
+    maxForks usedForks
+
     publishDir file(params.results + '/support-files/pbsv'), mode: "copy"
 
     input:
