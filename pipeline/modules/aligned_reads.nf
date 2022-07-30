@@ -106,7 +106,7 @@ process filter_pbsv {
 
     script:
 
-    outname = vcf_file.name.replace(".vcf", ".filtered.vcf") + 
+    outname = vcf_file.name.replace(".vcf", ".filtered.vcf") 
     """
     bcftools view -i'(AD[0:1] - AD[0:0])>=${ad_limits[0]} && (AD[0:1] - AD[0:0])<=${ad_limits[1]}' ${vcf_file} > "${outname}"
     """
