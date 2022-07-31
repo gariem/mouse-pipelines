@@ -154,7 +154,7 @@ workflow {
     sv_signatures = discover_pbsv(aligned_reads, repeats)
     vcf = call_pbsv(sv_signatures, reference)
 
-    filter_pbsv(vcf, [])
+    //filter_pbsv(vcf, [])
     sv_types = Channel.from(['INS', 'DEL', 'INV', 'DUP'])
     bed_files(vcf, sv_types)
 
