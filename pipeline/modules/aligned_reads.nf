@@ -10,7 +10,7 @@ params.aligned_reads = "./results/support-files/alignments/*.bam"
 params.results = "./results"
 
 maxcpus = Runtime.runtime.availableProcessors()
-usedForks = 4
+usedForks = 2
 taskCpus = Math.round(maxcpus / usedForks)
 
 process tandem_repeats { 
