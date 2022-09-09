@@ -4,6 +4,8 @@ nextflow.enable.dsl = 2
 
 params.reference = "./input/Mus_musculus.GRCm39.dna.toplevel.chr19.fa"
 params.chromosomes = "./input/chromosomes/*.chr19.fasta"
+params.minigraph_bubbles = "./results/support-files/minigraph/*.bubbles.bed"
+params.minigraph_gfa = "./results/support-files/minigraph/mouse_genomes_graph.gfa"
 params.results = "./results"
 
 maxcpus = Runtime.runtime.availableProcessors()
@@ -49,7 +51,7 @@ process bubble_bed {
     """
 }
 
-process call_indels {
+process call_simple_indels {
 
     publishDir file(params.results + '/calls/'), mode: "copy"
 
@@ -60,20 +62,23 @@ process call_indels {
         tuple val(strain), file("*.bed")
     
     """
-    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$6!="."&&(\$3-\$2)<\$7)print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph.INS.bed"
-    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$6!="."&&(\$3-\$2)>\$7)print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph.DEL.bed"
+    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$1==19 && \$2==\$3 && (\$3-\$2)<\$7) print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph.INS.simple.bed"
+    awk -F"[\t:]" 'BEGIN {OFS = "\t"} {if(\$1==19 && \$6=="*" && (\$3-\$2)>\$7) print \$1,\$2,\$3,\$7-(\$3-\$2)}' ${bubbles_bed} > "${strain}-minigraph.DEL.simple.bed"
     """    
 }
 
 
 workflow {
 
-    reference = file(params.reference)
-    chromosomes_ch = Channel.fromPath(params.chromosomes)
+    // reference = file(params.reference)
+    // chromosomes_ch = Channel.fromPath(params.chromosomes)
 
-    graph = genome_graph(reference, chromosomes_ch.collect())
+    // graph = genome_graph(reference, chromosomes_ch.collect())
+    // bubbles = bubble_bed(chromosomes_ch, graph)
 
-    bubbles = bubble_bed(chromosomes_ch, graph)
+    graph = file(params.minigraph_gfa)
+    bubbles = Channel.fromPath(params.minigraph_bubbles)
 
-    call_indels(bubbles)
+    call_simple_indels(bubbles)
+
 }
