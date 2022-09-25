@@ -24,9 +24,9 @@ process new_lab_prev_stats {
     window = params.window_lab
 
     """
-    awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$4}' ${lab_data} > lab_data
-    awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$4}' ${new_data} > new_data
-    awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$4}' ${prev_data} > prev_data
+    awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$3-\$2}' ${lab_data} > lab_data
+    awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$3-\$2}' ${new_data} > new_data
+    awk -F'\\t' 'BEGIN {OFS = FS} {print \$1,\$2-${window},\$3+${window},\$3-\$2}' ${prev_data} > prev_data
 
     bedtools intersect -a lab_data -b new_data -wa > new_intersected
     bedtools intersect -a lab_data -b new_data -v > new_missed.bed
