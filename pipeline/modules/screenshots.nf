@@ -36,17 +36,20 @@ process prepare_screnshot_data {
         then
             samtools view -b -@ ${taskCpus} ${igv_workdir}/${strain}/${strain}.contigs.bam \$chr > ${strain}.\$chr.contigs.bam
             samtools index -@ ${taskCpus} ${strain}.\$chr.contigs.bam
+            chr_bam=${strain}.\$chr.contigs.bam
+        else
+            chr_bam=${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam
         fi
 
         if [ ! -f ${igv_workdir}/${strain}/${strain}.\$chr.h1.contigs.bam ]
         then
-            MAX_POINT="\$(samtools view -H ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam | awk '{if(\$1~/@SQ/){print \$2"\\t1\\t"\$3}}' | sed 's/[SL]N://g' | grep -P "^\$chr\\t" | awk '{print \$3}')"
+            MAX_POINT="\$(samtools view -H ${chr_bam} | awk '{if(\$1~/@SQ/){print \$2"\\t1\\t"\$3}}' | sed 's/[SL]N://g' | grep -P "^\$chr\\t" | awk '{print \$3}')"
             POINT3=\$((\${MAX_POINT}/3))
             POINT6=\$((\${POINT3}*2))
 
-            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:1-\$POINT3 -b > ${strain}.h1.\$chr.contigs.bam
-            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:\$POINT3-\$POINT6 -b > ${strain}.h2.\$chr.contigs.bam
-            samtools view -@ ${taskCpus} -h ${igv_workdir}/${strain}/${strain}.\$chr.contigs.bam \$chr:\$POINT6-\$MAX_POINT -b > ${strain}.h3.\$chr.contigs.bam
+            samtools view -@ ${taskCpus} -h \${chr_bam} \$chr:1-\$POINT3 -b > ${strain}.h1.\$chr.contigs.bam
+            samtools view -@ ${taskCpus} -h \${chr_bam} \$chr:\$POINT3-\$POINT6 -b > ${strain}.h2.\$chr.contigs.bam
+            samtools view -@ ${taskCpus} -h \${chr_bam} \$chr:\$POINT6-\$MAX_POINT -b > ${strain}.h3.\$chr.contigs.bam
 
             samtools index -@ ${taskCpus} ${strain}.h1.\$chr.contigs.bam
             samtools index -@ ${taskCpus} ${strain}.h2.\$chr.contigs.bam
