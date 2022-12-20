@@ -75,5 +75,4 @@ workflow {
 
     bubbles = bubble_bed(chromosomes_ch, graph)
 
-    call_indels(bubbles)
 }
